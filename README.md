@@ -4,9 +4,7 @@
 
 一个纯前端、可复现的程序化氛围生成器。打开页面，它会读取你所在位置的实时天气；选一种心情、留下几个关键词，得到今天的配色、渐变粒子、氛围文案、声音气质和一张可下载的氛围卡。
 
-[在线 Demo](https://YOUR_NAME.github.io/vibe-generator/) · [设计方法](#设计方法) · [本地运行](#本地运行) · [部署到-github-pages](#部署到-github-pages)
-
-> 把上面的 `YOUR_NAME` 换成你的 GitHub 用户名。第一次部署成功后再更新这里。
+[在线 Demo](https://chencu-vinegar.github.io/vibe-generator/) · [GitHub 仓库](https://github.com/Chencu-vinegar/vibe-generator) · [设计方法](#设计方法) · [本地运行](#本地运行) · [部署到-github-pages](#部署到-github-pages)
 
 ![生成结果预览](docs/result.webp)
 
