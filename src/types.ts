@@ -97,4 +97,19 @@ export interface SharedVibe {
   seed: number
 }
 
+export type WeatherSource = 'geo' | 'ip'
+export type WeatherProvider = 'wttr.in' | 'Open-Meteo'
+
+export interface WeatherSnapshot {
+  weather: WeatherId
+  condition: string
+  temperature: number
+  feelsLike: number
+  isDay: boolean
+  location: string
+  source: WeatherSource
+  provider: WeatherProvider
+  updatedAt: number
+}
+
 export type SceneStyle = CSSProperties & Record<`--${string}`, string>

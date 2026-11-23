@@ -808,6 +808,220 @@ input:focus-visible {
   opacity: 1;
 }
 
+.live-weather {
+  padding: 11px 12px 9px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.055), transparent 55%),
+    var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  transition: border-color 250ms ease, background 250ms ease;
+}
+
+.live-weather:hover {
+  border-color: var(--line-strong);
+}
+
+.live-weather__main {
+  display: flex;
+  gap: 11px;
+  align-items: center;
+}
+
+.live-weather__icon {
+  display: grid;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  color: var(--accent);
+  place-items: center;
+  background: var(--panel-strong);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+}
+
+.live-weather__reading {
+  flex: 1;
+  min-width: 0;
+}
+
+.live-weather__temperature {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  min-width: 0;
+}
+
+.live-weather__temperature strong {
+  font-family: var(--font-serif);
+  font-size: 25px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.live-weather__temperature span {
+  overflow: hidden;
+  font-size: 10px;
+  color: var(--muted);
+  text-overflow: ellipsis;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.live-weather__meta {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin: 5px 0 0;
+  overflow: hidden;
+  font-size: 8px;
+  color: var(--faint);
+  letter-spacing: 0.015em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.live-weather__pulse {
+  flex: 0 0 auto;
+  width: 4px;
+  height: 4px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent-soft);
+  animation: pulse 3.4s ease-in-out infinite;
+}
+
+.live-weather__time {
+  flex: 0 0 auto;
+  padding-left: 6px;
+  font-family: var(--font-mono);
+  color: var(--faint);
+  border-left: 1px solid var(--line);
+}
+
+.live-weather__refresh {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 38px;
+  padding: 0;
+  font-size: 7px;
+  color: var(--faint);
+  letter-spacing: 0.02em;
+  background: transparent;
+  border: 0;
+  border-left: 1px solid var(--line);
+  transition: color 200ms ease;
+}
+
+.live-weather__refresh:hover:not(:disabled) {
+  color: var(--accent);
+}
+
+.live-weather__refresh:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.live-weather__refresh svg {
+  opacity: 0.8;
+}
+
+.live-weather__warning {
+  margin: 8px 0 0;
+  font-size: 8px;
+  line-height: 1.5;
+  color: var(--accent);
+}
+
+.live-weather__manual-tag {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 8px;
+  margin-top: 9px;
+  font-size: 8px;
+  color: var(--muted);
+  background: var(--panel-strong);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.live-weather__manual-tag button {
+  flex: 0 0 auto;
+  padding: 0;
+  font-size: 8px;
+  color: var(--accent);
+  background: transparent;
+  border: 0;
+}
+
+.live-weather__manual {
+  margin-top: 8px;
+  animation: rise-in 300ms ease both;
+}
+
+.live-weather__manual .weather-grid {
+  gap: 4px;
+}
+
+.live-weather__manual .weather-option {
+  height: 40px;
+  font-size: 8px;
+}
+
+.live-weather__manual .weather-option svg {
+  width: 17px;
+  height: 17px;
+}
+
+.live-weather__foot {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+  margin-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+.live-weather__privacy {
+  font-size: 8px;
+  line-height: 1.4;
+  color: var(--faint);
+}
+
+.live-weather__links {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 9px;
+  align-items: center;
+}
+
+.live-weather__links a,
+.live-weather__links button {
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  background: transparent;
+  border: 0;
+  transition: color 200ms ease;
+}
+
+.live-weather__links a:hover,
+.live-weather__links button:hover {
+  color: var(--accent);
+}
+
 .keyword-cloud {
   display: flex;
   flex-wrap: wrap;
@@ -1986,10 +2200,11 @@ input:focus-visible {
     background: linear-gradient(
       to bottom,
       var(--bg-0) 0%,
-      var(--bg-0) 64%,
+      var(--bg-0) 72%,
       transparent 100%
     );
-    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    backdrop-filter: blur(16px) saturate(120%);
   }
 
   .topbar::before {

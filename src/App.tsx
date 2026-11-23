@@ -5,12 +5,7 @@ import { ParticleField } from './components/ParticleField'
 import { ResultView } from './components/ResultView'
 import { Toast } from './components/Toast'
 import { TopBar } from './components/TopBar'
-import {
-  DEFAULT_INPUT,
-  KEYWORD_CHOICES,
-  MOODS,
-  WEATHERS,
-} from './data/vibes'
+import { DEFAULT_INPUT, KEYWORD_CHOICES, MOODS } from './data/vibes'
 import { buildSceneStyle, generateVibe, normalizeInput } from './lib/generator'
 import { copyText } from './lib/clipboard'
 import { downloadVibePoster } from './lib/export'
@@ -166,14 +161,13 @@ export default function App() {
 
   const handleRandom = useCallback(() => {
     const mood = pick(MOODS, Math.random)
-    const weather = pick(WEATHERS, Math.random)
     const shuffled = [...KEYWORD_CHOICES].sort(() => Math.random() - 0.5)
     const count = Math.random() > 0.45 ? 1 + Math.floor(Math.random() * 2) : 0
-    setInput({
+    setInput((previous) => ({
       mood: mood.id,
-      weather: weather.id,
+      weather: previous.weather,
       keywords: shuffled.slice(0, count).map((keyword) => keyword.label),
-    })
+    }))
     showToast('换了一种今天')
   }, [showToast])
 

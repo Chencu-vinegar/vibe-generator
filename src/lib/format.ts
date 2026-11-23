@@ -16,6 +16,11 @@ export function formatToday(date = new Date()): string {
   return `${date.getMonth() + 1}月${date.getDate()}日 · ${WEEKDAYS[date.getDay()]}`
 }
 
+export function formatClock(timestamp: number): string {
+  const date = new Date(timestamp)
+  return `${pad(date.getHours())}:${pad(date.getMinutes())}`
+}
+
 export function formatDateTime(timestamp: number): string {
   const date = new Date(timestamp)
   return `${date.getFullYear()}.${pad(date.getMonth() + 1)}.${pad(date.getDate())} · ${pad(

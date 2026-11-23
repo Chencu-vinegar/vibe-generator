@@ -4,12 +4,12 @@ import {
   KEYWORD_MAP,
   MOODS,
   MOOD_MAP,
-  WEATHERS,
   WEATHER_MAP,
 } from '../data/vibes'
 import type { VibeInput } from '../types'
 import { formatToday } from '../lib/format'
-import { ArrowUpRight, PlusIcon, RefreshIcon, SparkIcon, WeatherIcon } from './Icons'
+import { ArrowUpRight, PlusIcon, RefreshIcon, SparkIcon } from './Icons'
+import { LiveWeatherPanel } from './LiveWeatherPanel'
 
 interface ComposerProps {
   input: VibeInput
@@ -118,7 +118,7 @@ export function Composer({
         </h1>
 
         <p className="composer-lede">
-          选一种心情、一种天气，再留下几个词。
+          天气会自己来。选一种心情，再留下几个词。
           <br />
           把它翻译成今天的颜色、声音和一句话。
         </p>
@@ -127,7 +127,7 @@ export function Composer({
           <span className="composer-signature__rule" />
           <p>
             PROCEDURAL VIBE ENGINE
-            <small>SEED-BASED · LOCAL-FIRST · NO API</small>
+            <small>SEED-BASED · LIVE WEATHER · LOCAL ARCHIVE</small>
           </p>
         </div>
       </section>
@@ -169,30 +169,17 @@ export function Composer({
             </div>
           </div>
 
-          <div className="field">
+          <div className="field field--weather">
             <div className="field__label">
               <span className="field__number">02</span>
               <span>窗外的天气</span>
-              <small>WEATHER</small>
+              <small>LIVE WEATHER</small>
               <em>{selectedWeather.en}</em>
             </div>
-            <div className="weather-grid">
-              {WEATHERS.map((weather) => {
-                const selected = input.weather === weather.id
-                return (
-                  <button
-                    className={`weather-option ${selected ? 'is-selected' : ''}`}
-                    type="button"
-                    key={weather.id}
-                    aria-pressed={selected}
-                    onClick={() => onChange({ ...input, weather: weather.id })}
-                  >
-                    <WeatherIcon kind={weather.icon} size={21} />
-                    <span>{weather.label}</span>
-                  </button>
-                )
-              })}
-            </div>
+            <LiveWeatherPanel
+              selectedWeather={input.weather}
+              onWeatherChange={(weather) => onChange({ ...input, weather })}
+            />
           </div>
 
           <div className="field field--keywords">
