@@ -34,6 +34,69 @@ export function HistoryDrawer({
     [history],
   )
 
+  const overview = useMemo(() => {
+    const moodCounts = new Map<
+      string,
+      { char: string; label: string; count: number }
+    >()
+    const colorCounts = new Map<
+      string,
+      { name: string; hex: string; count: number }
+    >()
+
+    previews.forEach(({ vibe }) => {
+      const mood = moodCounts.get(vibe.mood.id) ?? {
+        char: vibe.mood.char,
+        label: vibe.mood.label,
+        count: 0,
+      }
+      mood.count += 1
+      moodCounts.set(vibe.mood.id, mood)
+
+      const color = vibe.palette.colors[2]
+      const paletteColor = colorCounts.get(color.name) ?? {
+        name: color.name,
+        hex: color.hex,
+        count: 0,
+      }
+      paletteColor.count += 1
+      colorCounts.set(color.name, paletteColor)
+    })
+
+    const topMood = [...moodCounts.values()].sort((a, b) => b.count - a.count)[0]
+    const topPalette = [...colorCounts.values()].sort(
+      (a, b) => b.count - a.count,
+    )[0]
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const days = Array.from({ length: 14 }, (_, index) => {
+      const date = new Date(today)
+      date.setDate(today.getDate() - (13 - index))
+      const start = date.getTime()
+      const endDate = new Date(date)
+      endDate.setDate(endDate.getDate() + 1)
+      const match = previews.find(
+        ({ entry }) =>
+          entry.createdAt >= start && entry.createdAt < endDate.getTime(),
+      )
+
+      return {
+        key: start,
+        day: date.getDate(),
+        entry: match?.entry ?? null,
+        vibe: match?.vibe ?? null,
+      }
+    })
+
+    return {
+      total: previews.length,
+      topMood,
+      topPalette,
+      days,
+    }
+  }, [previews])
+
   useEffect(() => {
     if (!open) {
       setClearArmed(false)
@@ -110,6 +173,84 @@ export function HistoryDrawer({
         <p className="drawer-intro">
           每一次生成都会自动留在这里。点开任意一天，可以找回当时的心情。
         </p>
+
+        {previews.length > 0 && (
+          <section className="archive-overview" aria-label="档案摘要">
+            <div className="archive-summary-head">
+              <span className="panel-eyebrow">AT A GLANCE</span>
+              <span>你的氛围记录</span>
+            </div>
+
+            <div className="archive-stats">
+              <div className="archive-stat">
+                <span>累计</span>
+                <strong>{String(overview.total).padStart(2, '0')}</strong>
+                <small>VIBES</small>
+              </div>
+              <div className="archive-stat">
+                <span>最常心情</span>
+                <strong>{overview.topMood?.char ?? '—'}</strong>
+                <small>
+                  {overview.topMood
+                    ? `${overview.topMood.label} · ${overview.topMood.count} 次`
+                    : '—'}
+                </small>
+              </div>
+              <div className="archive-stat">
+                <span>最常色</span>
+                <strong className="archive-stat__color">
+                  {overview.topPalette && (
+                    <i style={{ background: overview.topPalette.hex }} />
+                  )}
+                  {overview.topPalette?.name ?? '—'}
+                </strong>
+                <small>
+                  {overview.topPalette ? `${overview.topPalette.count} 次` : '—'}
+                </small>
+              </div>
+            </div>
+
+            <div className="archive-days">
+              <div className="archive-days__head">
+                <span>最近 14 天</span>
+                <span>点击色块恢复</span>
+              </div>
+              <div className="archive-days__grid">
+                {overview.days.map((day) => {
+                  const dayVibe = day.vibe
+                  const title = day.entry && dayVibe
+                    ? `恢复 ${formatArchiveTime(day.entry.createdAt)} · ${dayVibe.title.replace('\n', ' ')}`
+                    : '这一天还没有记录'
+                  return (
+                    <button
+                      className={`archive-day ${day.entry ? 'has-entry' : ''}`}
+                      type="button"
+                      key={day.key}
+                      disabled={!day.entry}
+                      onClick={() => day.entry && onRestore(day.entry)}
+                      title={title}
+                      aria-label={title}
+                    >
+                      <span
+                        className="archive-day__swatch"
+                        style={
+                          dayVibe
+                            ? {
+                                background: `linear-gradient(135deg, ${dayVibe.palette.colors[0].hex}, ${dayVibe.palette.colors[2].hex})`,
+                              }
+                            : undefined
+                        }
+                      />
+                      <span className="archive-day__num">
+                        {String(day.day).padStart(2, '0')}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          </section>
+        )}
 
         {previews.length === 0 ? (
           <div className="archive-empty">

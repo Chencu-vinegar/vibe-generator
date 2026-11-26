@@ -44,6 +44,24 @@ const MOOD_PARTICLE_TUNING: Record<MoodId, { density: number; speed: number }> =
   tender: { density: 0, speed: -0.05 },
 }
 
+const PARTICLE_LABELS: Record<Vibe['particle']['kind'], string> = {
+  rain: '斜雨',
+  mist: '雾团',
+  snow: '雪点',
+  dust: '尘埃光点',
+  ember: '上升余烬',
+}
+
+function signedPercent(value: number): string {
+  const percent = Math.round(value * 100)
+  return `${percent > 0 ? '+' : ''}${percent}%`
+}
+
+function signedDegrees(value: number): string {
+  const degrees = Math.round(value)
+  return `${degrees > 0 ? '+' : ''}${degrees}°`
+}
+
 function tunePalette(base: PaletteSeed, mood: MoodId, jitter: number): Palette {
   const tuning = MOOD_TUNING[mood]
   const colors = base.colors.map((color, index) => {
@@ -103,7 +121,9 @@ export function generateVibe(
   const cleanSeed = Math.abs(Math.floor(seed)) || 1
   const inputKey = `${input.mood}|${input.weather}|${input.keywords.join(',')}`
   const rng = mulberry32((hashString(inputKey) ^ cleanSeed) >>> 0)
-  const paletteBase = pick(PALETTES[input.weather], rng)
+  const paletteOptions = PALETTES[input.weather]
+  const paletteIndex = Math.floor(rng() * paletteOptions.length)
+  const paletteBase = paletteOptions[paletteIndex] ?? paletteOptions[0]
   const palette = tunePalette(paletteBase, input.mood, (rng() - 0.5) * 4)
   const title = pick(WEATHER_COPY[input.weather].titles, rng)
   const line = pick(MOOD_COPY[input.mood], rng)
@@ -126,6 +146,27 @@ export function generateVibe(
     keywordInfo.length > 0
       ? `带一点 ${keywordInfo.map((keyword) => keyword.label).join(' · ')} 的气味。`
       : '没有关键词，也是一种留白。'
+  const particle = {
+    kind: particleBase.kind,
+    density: clamp(
+      particleBase.density + particleMood.density + (rng() - 0.5) * 0.08,
+      0.35,
+      1.45,
+    ),
+    speed: clamp(
+      particleBase.speed + particleMood.speed + (rng() - 0.5) * 0.1,
+      0.18,
+      1.5,
+    ),
+  }
+  const gradient = {
+    angle: Math.round(105 + rng() * 95),
+    x1: Math.round(8 + rng() * 58),
+    y1: Math.round(6 + rng() * 54),
+    x2: Math.round(44 + rng() * 48),
+    y2: Math.round(44 + rng() * 48),
+  }
+  const tuning = MOOD_TUNING[input.mood]
 
   return {
     // Stable across reloads and share links: seed + input identify the vibe.
@@ -154,25 +195,20 @@ export function generateVibe(
       scene: listeningBase.scene,
       note: listeningMood.note,
     },
-    particle: {
-      kind: particleBase.kind,
-      density: clamp(
-        particleBase.density + particleMood.density + (rng() - 0.5) * 0.08,
-        0.35,
-        1.45,
-      ),
-      speed: clamp(
-        particleBase.speed + particleMood.speed + (rng() - 0.5) * 0.1,
-        0.18,
-        1.5,
-      ),
-    },
-    gradient: {
-      angle: Math.round(105 + rng() * 95),
-      x1: Math.round(8 + rng() * 58),
-      y1: Math.round(6 + rng() * 54),
-      x2: Math.round(44 + rng() * 48),
-      y2: Math.round(44 + rng() * 48),
+    particle,
+    gradient,
+    reasoning: {
+      weather: `${WEATHER_MAP[input.weather].label} → ${paletteBase.colors[0].name}色板`,
+      mood: `${MOOD_MAP[input.mood].char} · 饱和度 ${signedPercent(
+        tuning.saturation,
+      )} / 明度 ${signedPercent(tuning.lightness)} / 色相 ${signedDegrees(tuning.hue)}`,
+      palette: `第 ${paletteIndex + 1} / ${paletteOptions.length} 组 · ${
+        paletteBase.colors[0].name
+      } → ${palette.colors[4].name}`,
+      motion: `${PARTICLE_LABELS[particle.kind]} · 密度 ${particle.density.toFixed(
+        2,
+      )} / 速度 ${particle.speed.toFixed(2)}`,
+      words: `${title.replace('\n', ' ')} · 来自手写词库`,
     },
   }
 }

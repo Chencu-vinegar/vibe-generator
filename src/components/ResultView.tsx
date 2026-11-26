@@ -1,12 +1,15 @@
+import { useCallback, useState } from 'react'
 import type { Vibe } from '../types'
 import { formatDateTime } from '../lib/format'
 import { textOn } from '../lib/color'
 import {
   ArrowLeft,
+  ArrowUpRight,
   DownloadIcon,
   RefreshIcon,
   ShareIcon,
 } from './Icons'
+import { ReasoningSheet } from './ReasoningSheet'
 
 interface ResultViewProps {
   vibe: Vibe
@@ -29,6 +32,9 @@ export function ResultView({
   onEdit,
   onCopyColor,
 }: ResultViewProps) {
+  const [reasoningOpen, setReasoningOpen] = useState(false)
+  const closeReasoning = useCallback(() => setReasoningOpen(false), [])
+
   return (
     <main className="result-shell">
       <section className="result-hero" aria-labelledby="vibe-title">
@@ -66,7 +72,18 @@ export function ResultView({
             <span className="panel-eyebrow">TODAY&apos;S RECIPE</span>
             <h2>今日配方</h2>
           </div>
-          <span className="panel-seed">SEED {vibe.seed}</span>
+          <div className="panel-head__meta">
+            <span className="panel-seed">SEED {vibe.seed}</span>
+            <button
+              className="why-link"
+              type="button"
+              aria-haspopup="dialog"
+              onClick={() => setReasoningOpen(true)}
+            >
+              WHY THIS VIBE
+              <ArrowUpRight size={10} />
+            </button>
+          </div>
         </header>
 
         <section className="panel-section">
@@ -170,6 +187,12 @@ export function ResultView({
         </span>
         <span>VIBE GENERATOR / LOCAL ARCHIVE</span>
       </footer>
+
+      <ReasoningSheet
+        vibe={vibe}
+        open={reasoningOpen}
+        onClose={closeReasoning}
+      />
     </main>
   )
 }

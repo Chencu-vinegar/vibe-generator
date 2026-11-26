@@ -65,6 +65,14 @@ export interface KeywordInfo {
   preset: boolean
 }
 
+export interface VibeReasoning {
+  weather: string
+  mood: string
+  palette: string
+  motion: string
+  words: string
+}
+
 export interface Vibe {
   id: string
   number: string
@@ -83,6 +91,7 @@ export interface Vibe {
   keywords: KeywordInfo[]
   mood: MoodOption
   weather: WeatherOption
+  reasoning: VibeReasoning
 }
 
 export interface HistoryEntry {
